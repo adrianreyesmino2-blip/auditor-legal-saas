@@ -1,32 +1,6 @@
 import streamlit as st
 import requests
-# --- DETECTAR SI EL CLIENTE VIENE DE PAGAR EN STRIPE ---
-query_params = st.query_params
-if query_params.get("pago") == "exito":
-    st.balloons()  # ¡Efecto de globos de celebración!
-    st.success("🎉 ¡Pago realizado con éxito! Tu documento legal está listo.")
-    
-    texto_descarga = """
-==================================================
-POLÍTICA DE PRIVACIDAD Y PROTECCIÓN DE DATOS
-==================================================
-1. INFORMACIÓN AL USUARIO
-El Responsable del Tratamiento le informa que sus datos serán tratados de conformidad con lo dispuesto en el Reglamento (UE) 2016/679 (RGPD) y la LOPDGDD.
 
-2. FINALIDAD DEL TRATAMIENTO
-Atender las consultas planteadas por los usuarios y prestar los servicios solicitados a través del sitio web.
-
-3. CONTACTO
-Para el ejercicio de sus derechos de acceso, rectificación o supresión, diríjase al departamento de atención legal.
-==================================================
-    """
-    st.download_button(
-        label="📥 DESCARGAR MI POLÍTICA DE PRIVACIDAD (.TXT)",
-        data=texto_descarga,
-        file_name="politica_privacidad_oficial.txt",
-        mime="text/plain"
-    )
-    st.markdown("<br><hr><br>", unsafe_allow_html=True)
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
     page_title="VERIFICADOR LEGAL SaaS", 
@@ -163,6 +137,35 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+# --- DETECTAR SI EL CLIENTE VIENE DE PAGAR EN STRIPE ---
+query_params = st.query_params
+if query_params.get("pago") == "exito":
+    st.balloons()
+    st.success("🎉 ¡Pago realizado con éxito! Tu documentación legal personalizada está lista para descarga.")
+    
+    texto_descarga = """
+==================================================
+POLÍTICA DE PRIVACIDAD Y PROTECCIÓN DE DATOS
+==================================================
+1. INFORMACIÓN AL USUARIO
+El Responsable del Tratamiento le informa que sus datos serán tratados de conformidad con lo dispuesto en el Reglamento (UE) 2016/679 (RGPD) y la LOPDGDD.
+
+2. FINALIDAD DEL TRATAMIENTO
+Atender las consultas planteadas por los usuarios y prestar los servicios solicitados a través del sitio web.
+
+3. CONTACTO Y DERECHOS
+Para el ejercicio de sus derechos de acceso, rectificación, supresión o limitación, puede dirigirse al departamento de atención legal mediante la dirección de contacto indicada en el sitio web.
+==================================================
+    """
+    
+    st.download_button(
+        label="📥 DESCARGAR MI DOCUMENTO LEGAL (.TXT)",
+        data=texto_descarga,
+        file_name="politica_privacidad_oficial.txt",
+        mime="text/plain"
+    )
+    st.markdown("<br><hr style='border-color: #1f2937;'><br>", unsafe_allow_html=True)
 
 # --- HEADER PRINCIPAL ---
 st.markdown('<div class="hero-title">🛡️ AUDITOR LEGAL WEB</div>', unsafe_allow_html=True)
