@@ -138,14 +138,24 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- DETECTAR SI EL CLIENTE VIENE DE PAGAR EN STRIPE ---
-query_params = st.query_params
-if query_params.get("pago") == "exito":
+# --- DETECTAR PAGO REALIZADO (COMPATIBILIDAD MEJORADA) ---
+params = st.query_params
+pago_confirmado = False
+
+# Comprobar si 'pago' está en la URL con valor 'exito'
+if "pago" in params:
+    val = params["pago"]
+    if isinstance(val, list):
+        if "exito" in val:
+            pago_confirmado = True
+    elif val == "exito":
+        pago_confirmado = True
+
+if pago_confirmado:
     st.balloons()
     st.success("🎉 ¡Pago realizado con éxito! Tu documentación legal personalizada está lista para descarga.")
     
-    texto_descarga = """
-==================================================
+    texto_descarga = """==================================================
 POLÍTICA DE PRIVACIDAD Y PROTECCIÓN DE DATOS
 ==================================================
 1. INFORMACIÓN AL USUARIO
@@ -156,8 +166,7 @@ Atender las consultas planteadas por los usuarios y prestar los servicios solici
 
 3. CONTACTO Y DERECHOS
 Para el ejercicio de sus derechos de acceso, rectificación, supresión o limitación, puede dirigirse al departamento de atención legal mediante la dirección de contacto indicada en el sitio web.
-==================================================
-    """
+=================================================="""
     
     st.download_button(
         label="📥 DESCARGAR MI DOCUMENTO LEGAL (.TXT)",
