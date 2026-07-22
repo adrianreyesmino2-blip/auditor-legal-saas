@@ -142,7 +142,6 @@ st.markdown("""
 params = st.query_params
 pago_confirmado = False
 
-# Comprobar si 'pago' está en la URL con valor 'exito'
 if "pago" in params:
     val = params["pago"]
     if isinstance(val, list):
@@ -191,7 +190,9 @@ with col_btn:
     analizar = st.button("ANALIZAR AHORA")
 
 # --- LÓGICA DE AUDITORÍA ---
-if analizar:
+if analizar or st.session_state.get('analizado', False):
+    st.session_state['analizado'] = True
+    
     if not url_usuario.startswith("http"):
         url_usuario = "https://" + url_usuario
         
@@ -290,38 +291,37 @@ if analizar:
             st.subheader("🛠️ Generar Solución Legal Inmediata")
             st.write("Completa los datos de tu empresa para preparar la documentación legal adaptada:")
             
-            with st.form("form_generador"):
-                nombre_empresa = st.text_input("Nombre de la Empresa / Autónomo:")
-                cif_empresa = st.text_input("NIF / CIF:")
-                email_contacto = st.text_input("Email de contacto legal:")
+            nombre_empresa = st.text_input("Nombre de la Empresa / Autónomo:", key="nombre_empresa")
+            cif_empresa = st.text_input("NIF / CIF:", key="cif_empresa")
+            email_contacto = st.text_input("Email de contacto legal:", key="email_contacto")
+            
+            if nombre_empresa and cif_empresa:
+                st.success("✅ Datos registrados correctamente. Haz clic en el botón inferior para abonar y descargar tu documento:")
                 
-                btn_generar = st.form_submit_button("GENERAR Y CONTINUAR AL PAGO")
+                enlace_stripe = "https://buy.stripe.com/3cI5kD2FlcWy5K8a4387K00"
                 
-                if btn_generar and nombre_empresa and cif_empresa:
-                    st.success("✅ Datos registrados correctamente. Haz clic en el botón inferior para abonar y descargar tu documento:")
-                    
-                    enlace_stripe = "https://buy.stripe.com/3cI5kD2FlcWy5K8a4387K00"
-                    
-                    st.markdown(f"""
-                        <div style="text-align: center; margin-top: 15px;">
-                            <a href="{enlace_stripe}" target="_blank" style="text-decoration: none;">
-                                <button type="button" style="
-                                    width: 100%;
-                                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                                    color: white;
-                                    padding: 16px;
-                                    border: none;
-                                    border-radius: 8px;
-                                    font-size: 1.05rem;
-                                    font-weight: 700;
-                                    cursor: pointer;
-                                    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-                                ">
-                                    💳 PAGAR Y DESCARGAR DOCUMENTO
-                                </button>
-                            </a>
-                        </div>
-                    """, unsafe_allow_html=True)
+                st.markdown(f"""
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="{enlace_stripe}" target="_blank" style="text-decoration: none;">
+                            <button type="button" style="
+                                width: 100%;
+                                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                color: white;
+                                padding: 16px;
+                                border: none;
+                                border-radius: 8px;
+                                font-size: 1.05rem;
+                                font-weight: 700;
+                                cursor: pointer;
+                                box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+                            ">
+                                💳 PAGAR Y DESCARGAR DOCUMENTO (9,99 €)
+                            </button>
+                        </a>
+                    </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.info("ℹ️ Rellena el Nombre de la Empresa y CIF para activar el botón de pago.")
 
     except Exception as e:
         st.error(f"Error de conexión con la URL especificada: {e}")
