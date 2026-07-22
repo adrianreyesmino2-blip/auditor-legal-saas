@@ -152,25 +152,62 @@ if "pago" in params:
 
 if pago_confirmado:
     st.balloons()
-    st.success("🎉 ¡Pago realizado con éxito! Tu documentación legal personalizada está lista para descarga.")
-    
-    texto_descarga = """==================================================
-POLÍTICA DE PRIVACIDAD Y PROTECCIÓN DE DATOS
-==================================================
-1. INFORMACIÓN AL USUARIO
-El Responsable del Tratamiento le informa que sus datos serán tratados de conformidad con lo dispuesto en el Reglamento (UE) 2016/679 (RGPD) y la LOPDGDD.
+    st.success("🎉 ¡Pago confirmado con éxito! Tu documentación legal adaptada está lista.")
 
-2. FINALIDAD DEL TRATAMIENTO
-Atender las consultas planteadas por los usuarios y prestar los servicios solicitados a través del sitio web.
+    # Recuperar datos de la sesión o usar valores por defecto si la navegación limpió el estado
+    empresa = st.session_state.get('empresa', '[NOMBRE DE LA EMPRESA / AUTÓNOMO]')
+    cif = st.session_state.get('cif', '[NIF/CIF DE LA EMPRESA]')
+    email = st.session_state.get('email', '[EMAIL DE CONTACTO]')
+    web = st.session_state.get('web_analizada', '[SITIO WEB]')
 
-3. CONTACTO Y DERECHOS
-Para el ejercicio de sus derechos de acceso, rectificación, supresión o limitación, puede dirigirse al departamento de atención legal mediante la dirección de contacto indicada en el sitio web.
-=================================================="""
-    
+    # PLANTILLA LEGAL COMPLETA Y ADAPTADA AL RGPD Y LSSI
+    documento_personalizado = f"""================================================================================
+POLÍTICA DE PRIVACIDAD Y AVISO LEGAL OFICIAL
+================================================================================
+
+1. INFORMACIÓN GENERAL Y DATOS DEL RESPONSABLE
+En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de
+la Sociedad de la Información y Comercio Electrónico (LSSI-CE) y del Reglamento 
+(UE) 2016/679 General de Protección de Datos (RGPD), se informan los siguientes datos:
+
+- Titular / Razón Social: {empresa}
+- NIF / CIF: {cif}
+- Sitio Web: {web}
+- Correo Electrónico de Contacto: {email}
+
+2. TRATAMIENTO DE DATOS PERSONALES
+El Titular garantiza la confidencialidad de los datos personales facilitados por los
+usuarios a través de las vías de contacto de la web. Los datos recopilados serán 
+tratados únicamente con las siguientes finalidades:
+
+a) Responder a solicitudes de información, dudas o presupuestos.
+b) Prestar los servicios prestados o contratados a través del sitio web.
+c) Enviar comunicaciones comerciales en caso de que hayan sido expresamente autorizadas.
+
+3. BASE LEGÍTIMA DEL TRATAMIENTO
+La base legal para el tratamiento de sus datos es el consentimiento expreso otorgado 
+por el usuario al enviar un formulario o ponerse en contacto, así como la ejecución 
+de la relación contractual o precontractual en su caso.
+
+4. DERECHOS DEL USUARIO (ARCO-POL)
+Conforme a la normativa RGPD, el usuario puede ejercitar en cualquier momento sus derechos 
+de Acceso, Rectificación, Cancelación, Oposición, Portabilidad y Olvido enviando un 
+correo electrónico a: {email}, adjuntando copia de su documento de identidad.
+
+5. PROPIEDAD INTELECTUAL
+Todos los contenidos del sitio web (textos, gráficos, logotipos, diseño) son propiedad 
+de {empresa} o cuentan con licencia de uso. Queda prohibida la reproducción total o 
+parcial sin autorización explícita.
+
+================================================================================
+Documento generado dinámicamente mediante el Verificador Legal SaaS.
+================================================================================
+"""
+
     st.download_button(
-        label="📥 DESCARGAR MI DOCUMENTO LEGAL (.TXT)",
-        data=texto_descarga,
-        file_name="politica_privacidad_oficial.txt",
+        label="📥 DESCARGAR POLÍTICA DE PRIVACIDAD Y AVISO LEGAL (.TXT)",
+        data=documento_personalizado,
+        file_name=f"Politica_Privacidad_{empresa.replace(' ', '_')}.txt",
         mime="text/plain"
     )
     st.markdown("<br><hr style='border-color: #1f2937;'><br>", unsafe_allow_html=True)
@@ -195,6 +232,8 @@ if analizar or st.session_state.get('analizado', False):
     
     if not url_usuario.startswith("http"):
         url_usuario = "https://" + url_usuario
+    
+    st.session_state['web_analizada'] = url_usuario
         
     st.markdown(f"<p style='text-align:center; color:#64748b; margin-top: 1rem;'>Analizando estructura HTML de <b>{url_usuario}</b>...</p>", unsafe_allow_html=True)
     
@@ -291,12 +330,17 @@ if analizar or st.session_state.get('analizado', False):
             st.subheader("🛠️ Generar Solución Legal Inmediata")
             st.write("Completa los datos de tu empresa para preparar la documentación legal adaptada:")
             
-            nombre_empresa = st.text_input("Nombre de la Empresa / Autónomo:", key="nombre_empresa")
-            cif_empresa = st.text_input("NIF / CIF:", key="cif_empresa")
-            email_contacto = st.text_input("Email de contacto legal:", key="email_contacto")
+            nombre_empresa = st.text_input("Nombre de la Empresa / Autónomo:", key="input_empresa")
+            cif_empresa = st.text_input("NIF / CIF:", key="input_cif")
+            email_contacto = st.text_input("Email de contacto legal:", key="input_email")
             
             if nombre_empresa and cif_empresa:
-                st.success("✅ Datos registrados correctamente. Haz clic en el botón inferior para abonar y descargar tu documento:")
+                # Guardar datos en la sesión para que persistan
+                st.session_state['empresa'] = nombre_empresa
+                st.session_state['cif'] = cif_empresa
+                st.session_state['email'] = email_contacto
+                
+                st.success("✅ Datos registrados correctamente. Haz clic en el botón inferior para abonar y descargar tu documento personalizado:")
                 
                 enlace_stripe = "https://buy.stripe.com/3cI5kD2FlcWy5K8a4387K00"
                 
