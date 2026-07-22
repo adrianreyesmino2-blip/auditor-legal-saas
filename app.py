@@ -246,37 +246,44 @@ if analizar:
 
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- SECCIÓN NUEVA: GENERADOR AUTOMÁTICO DE SOLUCIÓN ---
+        # --- SECCIÓN GENERADOR + PASARELA DE PAGO ---
         if faltantes:
             st.markdown("<br><hr style='border-color: #1f2937;'><br>", unsafe_allow_html=True)
             st.subheader("🛠️ Generar Solución Legal Inmediata")
-            st.write("Completa los datos de tu empresa para generar un borrador de tu Política de Privacidad adaptada:")
+            st.write("Completa los datos de tu empresa para preparar la documentación legal adaptada:")
             
             with st.form("form_generador"):
                 nombre_empresa = st.text_input("Nombre de la Empresa / Autónomo:")
                 cif_empresa = st.text_input("NIF / CIF:")
                 email_contacto = st.text_input("Email de contacto legal:")
                 
-                btn_generar = st.form_submit_button("GENERAR DOCUMENTO LEGAL")
+                btn_generar = st.form_submit_button("GENERAR Y CONTINUAR AL PAGO")
                 
                 if btn_generar and nombre_empresa and cif_empresa:
-                    texto_politica = f"""
-==================================================
-POLÍTICA DE PRIVACIDAD Y PROTECCIÓN DE DATOS
-==================================================
-1. INFORMACIÓN AL USUARIO
-{nombre_empresa}, con NIF/CIF {cif_empresa}, como Responsable del Tratamiento, le informa que sus datos serán tratados de conformidad con lo dispuesto en el Reglamento (UE) 2016/679 (RGPD).
-
-2. FINALIDAD DEL TRATAMIENTO
-Atender las consultas planteadas por los usuarios y prestar los servicios solicitados a través del sitio web.
-
-3. CONTACTO
-Para el ejercicio de sus derechos de acceso, rectificación o supresión, puede dirigirse a: {email_contacto}.
-==================================================
-                    """
-                    st.success("✅ Documento generado con éxito:")
-                    st.code(texto_politica, language="text")
-                    st.download_button("📥 Descargar documento (.txt)", data=texto_politica, file_name="politica_privacidad.txt")
+                    st.success("✅ Datos registrados correctamente. Haz clic en el botón inferior para abonar y descargar tu documento:")
+                    
+                    enlace_stripe = "https://buy.stripe.com/3cI5kD2FlcWy5K8a4387K00"
+                    
+                    st.markdown(f"""
+                        <div style="text-align: center; margin-top: 15px;">
+                            <a href="{enlace_stripe}" target="_blank" style="text-decoration: none;">
+                                <button type="button" style="
+                                    width: 100%;
+                                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                    color: white;
+                                    padding: 16px;
+                                    border: none;
+                                    border-radius: 8px;
+                                    font-size: 1.05rem;
+                                    font-weight: 700;
+                                    cursor: pointer;
+                                    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+                                ">
+                                    💳 PAGAR Y DESCARGAR DOCUMENTO
+                                </button>
+                            </a>
+                        </div>
+                    """, unsafe_allow_html=True)
 
     except Exception as e:
         st.error(f"Error de conexión con la URL especificada: {e}")
